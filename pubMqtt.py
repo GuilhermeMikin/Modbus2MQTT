@@ -8,11 +8,11 @@ port = 1883
 client = mqtt.Client()
 
 if client.connect(broker_addrs, port, 60) != 0:
-    print("Could not connect to MQTT Broker!")
+    print("Não foi possível estabelecer conexão com o Broker MQTT!")
     sys.exit(-1)
 
 topic1 = "test/status"
-msg1 = "Hello World from paho-mqtt!"
+msg1 = f"Mensagem referente ao tópico: {topic1}!"
 
 client.publish(topic1, msg1)
 sleep(0.2)
