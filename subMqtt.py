@@ -3,7 +3,7 @@ import sys
 from time import sleep
 
 broker_local_addrs = "127.0.0.1"
-broker_aws_addrs = "3.134.40.193"
+broker_cloud_addrs = "****************"
 port = 1883
 
 def onMessage(client, userdata, msg):

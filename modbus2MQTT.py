@@ -34,16 +34,19 @@ class ClienteMODBUS():
         Método para atendimento do usuário
         """
         try:
+            print('\n--> Testando conexão Modbus através do IP.. ', end='')
             self._cliente.open()
-            print('\n\033[33m --> Cliente Modbus TCP conectado..\033[m')
+            print('\033[33m --> Tudo OK\033[m')
+            print('--> Testando comunicação com o Broker MQTT.. ', end='')
             try:
                 if self._client_mqtt.connect(self._broker_addrs, self._broker_port, 60) != 0:
                     print("Não foi possível estabelecer conexão com o Broker MQTT!")
                     sys.exit(-1)
                 else:
-                    print('\033[33m --> Cliente MQTT conectado ao Broker..\033[m')
+                    print('\033[33m --> Tudo OK\033[m')
             except Exception as e:
                 print('\033[31mERRO: ', e.args, '\033[m')
+                print("\nNão foi possível estabelecer conexão com o Broker MQTT!\nVerifique se o Endereço IPv4 está OK e tente novamente..")
                 print('Seguindo sem conexão com o Broker MQTT..')
         except Exception as e:
             print('\033[31mERRO: ', e.args, '\033[m')
