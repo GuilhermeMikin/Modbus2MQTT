@@ -20,7 +20,7 @@ if client.connect(broker_local_addrs, port, 60) != 0:
 else:
     print("Cliente MQTT conectado..")
 
-client.subscribe("/test/status/")
+client.subscribe("test/status")
 
 try:
     print("\nPressione CTRL+C para desconectar...")
