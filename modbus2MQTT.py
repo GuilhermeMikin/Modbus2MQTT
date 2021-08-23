@@ -38,6 +38,7 @@ class ClienteMODBUS():
             self._cliente.open()
             print('\033[33m --> Tudo OK\033[m')
             print('--> Testando comunicação com o Broker MQTT.. ', end='')
+            sleep(1)
             try:
                 if self._client_mqtt.connect(self._broker_addrs, self._broker_port, 60) != 0:
                     print("Não foi possível estabelecer conexão com o Broker MQTT!")
@@ -207,11 +208,12 @@ class ClienteMODBUS():
                         sleep(1.5)
 
                 elif sel == '3':
+                    print('Tipos de configurações: ')
                     print('\n1- Configuração de leitura Modbus \n2- Configuração Broker MQTT \n3- Voltar')
                     while True:
                         tpconfig = input("Configuração: ")
                         if tpconfig not in '123':
-                            print('\033[31mDigite um tipo válido..\033[m')
+                            print('\033[31mDigite um tipo de configuração válido.. (1, 2 ou 3)\033[m')
                             sleep(0.5)
                         else:
                             break
@@ -221,8 +223,14 @@ class ClienteMODBUS():
                         print('Configurações de Leitura Modbus'.center(100))
                         print(f'\n\033[32m->\033[m Configuração atual: - IP Addrs: \033[35m{self._server_ip}\033[m - TCP Port: \033[35m{self._port}\033[m - Device ID: \033[35m{self._device_id}\033[m - Scan_Time: \033[35m{self._scan_time}\033[ms')
                         print('\nQual tipo de configuração deseja fazer? \n1- Endereço IP \n2- Porta TCP \n3- Device ID \n4- ScanTime \n5- Voltar')
-                        config = int(input("Configuração: "))
-                        if config == 1:
+                        while True:
+                            config = input("Configuração: ")
+                            if config not in '12345':
+                                print('\033[31mDigite um tipo de configuração válido.. (1, 2, 3, 4 ou 5)\033[m')
+                                sleep(0.5)
+                            else:
+                                break
+                        if int(config) == 1:
                             ipserv = str(input(' Novo endereço IP: '))
                             try:
                                 self._cliente.close()
@@ -235,7 +243,7 @@ class ClienteMODBUS():
                                 print('\033[31mERRO: ', e.args, '\033[m')
                                 print('\nNão foi possível alterar o endereço IP.. \nVoltando ao menu..\n\n')
                                 sleep(0.5)
-                        elif config == 2:
+                        elif int(config) == 2:
                             porttcp = input(' Nova porta TCP: ')
                             try:
                                 self._cliente.close()
@@ -248,7 +256,7 @@ class ClienteMODBUS():
                                 print('\033[31mERRO: ', e.args, '\033[m')
                                 print('\nNão foi possível alterar a porta.. \nVoltando ao menu..\n\n')
                                 sleep(0.5)
-                        elif config == 3:
+                        elif int(config) == 3:
                             while True:
                                 iddevice = input(' Novo device ID: ')
                                 if 0 <= int(iddevice) < 256:
@@ -267,7 +275,7 @@ class ClienteMODBUS():
                                 print('\033[31mERRO: ', e.args, '\033[m')
                                 print('\nNão foi possível alterar o ID do device.. \nVoltando ao menu..\n\n')
                                 sleep(0.5)
-                        elif config == 4:
+                        elif int(config) == 4:
                             scant = input(' Novo tempo de varredura [s]: ')
                             try:    
                                 self._scan_time = float(scant)
@@ -276,8 +284,8 @@ class ClienteMODBUS():
                                 print('\033[31mERRO: ', e.args, '\033[m')
                                 print('\nNão foi possível alterar o tempo de varredura.. \nVoltando ao menu..\n\n')
                                 sleep(0.5)
-                        elif config == 5:
-                            print('\nVoltando ao menu anterior..\n')
+                        elif int(config) == 5:
+                            print('\nVoltando ao menu inicial..\n')
                             sleep(0.5)
                         else:
                             print('\033[31mSeleção inválida..\033[m\n')
@@ -286,65 +294,37 @@ class ClienteMODBUS():
                         print('')
                         print('-' * 100)
                         print('Configurações Broker MQTT'.center(100))
-                        print(f'\n\033[32m->\033[m Configuração atual: - IP Addrs: \033[35m{self._server_ip}\033[m - TCP Port: \033[35m{self._port}\033[m - Device ID: \033[35m{self._device_id}\033[m - Scan_Time: \033[35m{self._scan_time}\033[ms')
-                        print('\nQual tipo de configuração deseja fazer? \n1- Endereço IP \n2- Porta \n3- Usuário ID \n4- Senha \n5- Voltar')
-                        config = int(input("Configuração: "))
-                        if config == 1:
+                        print(f'\n\033[32m->\033[m Configuração atual: - IP Addrs: \033[35m{self._broker_addrs}\033[m - Port: \033[35m{self._broker_port}\033[m')
+                        print('\nQual tipo de configuração deseja fazer? \n1- Endereço IP \n2- Porta \n3- Voltar')
+                        while True:
+                            config = input("Configuração: ")
+                            if config not in '123':
+                                print('\033[31mDigite um tipo de configuração válido.. (1, 2 ou 3)\033[m')
+                                sleep(0.5)
+                            else:
+                                break
+                        if int(config) == 1:
                             ipserv = str(input(' Endereço IP do broker: '))
                             try:
-                                self._cliente.close()
-                                self._server_ip = ipserv
-                                self._cliente = ModbusClient(host=self._server_ip)
-                                self._cliente.open()
-                                print(f'\nServer IP alterado para {ipserv} com sucesso!!\n')
+                                self._broker_addrs = ipserv
+                                print(f'\nBroker IP alterado para {ipserv} com sucesso!!\n')
                                 sleep(0.5)
                             except Exception as e:
                                 print('\033[31mERRO: ', e.args, '\033[m')
                                 print('\nNão foi possível alterar o endereço IP.. \nVoltando ao menu..\n\n')
                                 sleep(0.5)
-                        elif config == 2:
-                            porttcp = input(' Nova porta: ')
+                        elif int(config) == 2:
+                            portbroker = input(' Nova porta: ')
                             try:
-                                self._cliente.close()
-                                self._port = int(porttcp)
-                                self._cliente = ModbusClient(port=self._port)
-                                self._cliente.open()
-                                print(f'\nTCP port alterado para {porttcp} com sucesso!!\n')
+                                self._broker_port = portbroker
+                                print(f'\nPorta alterada para {portbroker} com sucesso!!\n')
                                 sleep(0.5)
                             except Exception as e:
                                 print('\033[31mERRO: ', e.args, '\033[m')
                                 print('\nNão foi possível alterar a porta.. \nVoltando ao menu..\n\n')
                                 sleep(0.5)
-                        elif config == 3:
-                            while True:
-                                iddevice = input(' Usuário: ')
-                                if 0 <= int(iddevice) < 256:
-                                    break
-                                else:
-                                    print('\033[31mDevice ID deve ser um número inteiro entre 0 e 256.\033[m', end='')
-                                    sleep(0.5)
-                            try:
-                                self._cliente.close()
-                                self._device_id = int(iddevice)
-                                self._cliente = ModbusClient(unit_id=self._device_id)
-                                self._cliente.open()
-                                print(f'\nDevice ID alterado para {iddevice} com sucesso!!\n')
-                                sleep(0.5)
-                            except Exception as e:
-                                print('\033[31mERRO: ', e.args, '\033[m')
-                                print('\nNão foi possível alterar o ID do device.. \nVoltando ao menu..\n\n')
-                                sleep(0.5)
-                        elif config == 4:
-                            scant = input(' Senha: ')
-                            try:    
-                                self._scan_time = float(scant)
-                                print(f'\nScan_time alterado para {scant}s com sucesso!!\n')
-                            except Exception as e:
-                                print('\033[31mERRO: ', e.args, '\033[m')
-                                print('\nNão foi possível alterar o tempo de varredura.. \nVoltando ao menu..\n\n')
-                                sleep(0.5)
-                        elif config == 5:
-                            print('\nVoltando ao menu anterior..\n')
+                        elif int(config) == 3:
+                            print('\nVoltando ao menu inicial..\n')
                             sleep(0.5)
                         else:
                             print('\033[31mSeleção inválida..\033[m\n')
