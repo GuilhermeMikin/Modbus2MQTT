@@ -24,6 +24,7 @@ class ClienteMODBUS():
         self._broker_addrs = broker_addr
         self._broker_port = broker_port
         self._client_mqtt = mqtt.Client()
+        self._status_conn_mqtt = False
 
         self._dbpath = dbpath
         self._con = sqlite3.connect(self._dbpath)
@@ -45,6 +46,7 @@ class ClienteMODBUS():
                     sys.exit(-1)
                 else:
                     print('\033[33m --> Tudo OK\033[m')
+                    self._status_conn_mqtt = True
             except Exception as e:
                 print('\033[31mERRO: ', e.args, '\033[m')
                 print("\nNão foi possível estabelecer conexão com o Broker MQTT!\nVerifique se o Endereço IPv4 está OK e tente novamente..")
@@ -94,9 +96,13 @@ class ClienteMODBUS():
                                     print(f'\033[33mLeitura {i+1}:\033[m', end='')
                                     modbusValues = self.lerDado(int(tipo),int(addr),leng)
                                     print(modbusValues)
-                                    self.mqttPublish(topic="test/status", msg=f"Leitura {i+1} {func}: {modbusValues}")
+                                    if self._status_conn_mqtt:
+                                        self.mqttPublish(topic="test/status", msg=f"Leitura {i+1} {func}: {modbusValues}")
                                     sleep(self._scan_time)
-                                print('\nLeituras Modbus foram publicadas no broker através do tópico /test/status/ \nE inseridas no Banco de Dados local com sucesso!!\n')
+                                if self._status_conn_mqtt:
+                                    print('\nLeituras Modbus foram publicadas no broker através do tópico /test/status/ \nE inseridas no Banco de Dados local com sucesso!!\n')
+                                else:
+                                    print('\nLeituras Modbus foram inseridas no Banco de Dados local com sucesso!!\nPorém, não publicadas no Broker MQTT..\n')
                                 sleep(0.5)
                             except Exception as e:
                                 print('\033[31mERRO: ', e.args, '\033[m')
@@ -304,11 +310,24 @@ class ClienteMODBUS():
                             else:
                                 break
                         if int(config) == 1:
-                            ipserv = str(input(' Endereço IP do broker: '))
+                            ipserv = str(input(' Novo endereço IP do broker: '))
                             try:
                                 self._broker_addrs = ipserv
-                                print(f'\nBroker IP alterado para {ipserv} com sucesso!!\n')
+                                print('\n--> Testando comunicação com o Broker MQTT.. ', end='')
                                 sleep(0.5)
+                                try:
+                                    if self._client_mqtt.connect(self._broker_addrs, self._broker_port, 60) != 0:
+                                        print("Não foi possível estabelecer conexão com o Broker MQTT!")
+                                        sys.exit(-1)
+                                    else:
+                                        print('\033[33m --> Tudo OK\033[m')
+                                        print(f'Broker IP alterado para {ipserv} com sucesso!!\n')
+                                        self._status_conn_mqtt = True
+                                        sleep(0.2)
+                                except Exception as e:
+                                    print('\033[31mERRO: ', e.args, '\033[m')
+                                    print("\nNão foi possível estabelecer conexão com o Broker MQTT!\nVerifique se o Endereço IPv4 está OK e tente novamente..")
+                                    print('Seguindo sem conexão com o Broker MQTT..')
                             except Exception as e:
                                 print('\033[31mERRO: ', e.args, '\033[m')
                                 print('\nNão foi possível alterar o endereço IP.. \nVoltando ao menu..\n\n')
