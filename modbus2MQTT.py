@@ -51,6 +51,7 @@ class ClienteMODBUS():
                 print('\033[31mERRO: ', e.args, '\033[m')
                 print("\nNão foi possível estabelecer conexão com o Broker MQTT!\nVerifique se o Endereço IPv4 está OK e tente novamente..")
                 print('Seguindo sem conexão com o Broker MQTT..')
+            self._client_mqtt.disconnect()
         except Exception as e:
             print('\033[31mERRO: ', e.args, '\033[m')
 
@@ -328,6 +329,8 @@ class ClienteMODBUS():
                                     print('\033[31mERRO: ', e.args, '\033[m')
                                     print("\nNão foi possível estabelecer conexão com o Broker MQTT!\nVerifique se o Endereço IPv4 está OK e tente novamente..")
                                     print('Seguindo sem conexão com o Broker MQTT..')
+                                    self._status_conn_mqtt = False
+                                self._client_mqtt.disconnect()
                             except Exception as e:
                                 print('\033[31mERRO: ', e.args, '\033[m')
                                 print('\nNão foi possível alterar o endereço IP.. \nVoltando ao menu..\n\n')
@@ -598,12 +601,12 @@ class ClienteMODBUS():
             if self._client_mqtt.connect(self._broker_addrs, self._broker_port, 60) != 0:
                 print("Não foi possível estabelecer conexão com o Broker MQTT!")
                 sys.exit(-1)
-
             self._client_mqtt.publish(topic, msg)
             sleep(0.2)
             self._client_mqtt.disconnect()
-
         except Exception as e:
-            print('\033[31mERRO: ', e.args, '\033[m')
+            print('\033[31mERRO: ', e.args, '\033[m', end='')
+            print('Erro ao tentar publicar no broker, confira o endereço IP e a porta do mesmo..')
+            self._status_conn_mqtt = False
         
             
