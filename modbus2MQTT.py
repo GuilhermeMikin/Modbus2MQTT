@@ -214,8 +214,8 @@ class ClienteMODBUS():
                         sleep(1.5)
 
                 elif sel == '3':
-                    print('Tipos de configurações: ')
-                    print('\n1- Configuração de leitura Modbus \n2- Configuração Broker MQTT \n3- Voltar')
+                    print('\nTipos de configurações: ')
+                    print('1- Configuração de leitura Modbus \n2- Configuração Broker MQTT \n3- Voltar')
                     while True:
                         tpconfig = input("Configuração: ")
                         if tpconfig not in '123':
