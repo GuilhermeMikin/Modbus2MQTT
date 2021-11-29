@@ -1,0 +1,15 @@
+CHANGES
+LICENSE
+MANIFEST.in
+README.rst
+setup.cfg
+setup.py
+pyModbusTCP/__init__.py
+pyModbusTCP/client.py
+pyModbusTCP/constants.py
+pyModbusTCP/server.py
+pyModbusTCP/utils.py
+pyModbusTCP.egg-info/PKG-INFO
+pyModbusTCP.egg-info/SOURCES.txt
+pyModbusTCP.egg-info/dependency_links.txt
+pyModbusTCP.egg-info/top_level.txt
