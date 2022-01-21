@@ -35,7 +35,11 @@ class ClienteMODBUS():
             print('-' * 100)
             print('Welcome to Modbus2MQTT Gateway!!'.center(100))
             try:
-                self._server_ip = input('\nPlease, enter the Modbus TCP IP Address: ')
+                modbus_server_ip = input('\nPlease, enter the Modbus TCP IP Address: ')
+                if modbus_server_ip == "l":
+                    self._server_ip = 'localhost'
+                else:
+                    self._server_ip = modbus_server_ip
                 self._port = input('Enter the TCP Port: ')
                 print('\n--> Testing Modbus Connection.. ', end='')
                 self._cliente.open()
@@ -44,7 +48,11 @@ class ClienteMODBUS():
             except Exception as e:
                 print('ERROR: ', e.args)
 
-            self._broker_addrs = str(input('\nPlease, now enter the MQTT Broker Server: '))
+            mqtt_broker = str(input('\nPlease, now enter the MQTT Broker Server: '))
+            if mqtt_broker == "aws":
+                   self._broker_addrs = "3.134.40.193"
+            else:
+                self._broker_addrs = mqtt_broker
             self._broker_port = int(input('Enter the Port: '))
             print('\n--> Testing MQTT BROKER Connection.. ', end='')
             sleep(1)
