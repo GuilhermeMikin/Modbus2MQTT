@@ -14,6 +14,7 @@ class ClienteMODBUS():
         """
         Construtor
         """
+        self._app = True
         self._scan_time = scan_time
         self._server_ip = server_addr
         self._device_id = device_id
@@ -31,53 +32,107 @@ class ClienteMODBUS():
         self._threadread = None
         self._readingthread = False
 
-    def atendimento(self):
+
+    def app(self):
         """
-        Método para atendimento do usuário
+        Método para primeiras opções do usuário
         """
         try:
             print('-' * 100)
             print('Welcome to Modbus2MQTT Gateway!!'.center(100))
-            try:
-                modbus_server_ip = input(
-                    '\nPlease, enter the Modbus TCP IP Address: ')
-                if modbus_server_ip == "l":
-                    self._server_ip = 'localhost'
-                else:
-                    self._server_ip = modbus_server_ip
-                self._port = input('Enter the TCP Port: ')
-                print('\n--> Testing Modbus/TCP connection.. ', end='')
-                self._cliente.open()
-                sleep(0.3)
-                print('--> OK')
-            except Exception as e: 
-                print('ERROR: ', e.args)
+            print()
+            while self._app == True:
+                print("""
+Available Options:
+1- Default configurations (Modbus and MQTT local, it is also possible to change it later)
+2- Set Modbus and MQTT configurations
+3- About Modbus2MQTT Gateway
+4- Close APP""")
+                while True:
+                    firstoptions = input("Option: ")
+                    if firstoptions not in '1' and firstoptions not in '2' and firstoptions not in '3' and firstoptions not in '4':
+                        print('Enter a valid option...')
+                        sleep(0.5)
+                    else:
+                        break
 
-            mqtt_broker = str(
-                input('\nPlease, now enter the MQTT Broker Address: '))
-            if mqtt_broker == "aws":
-                self._broker_addrs = "3.134.40.193"
-            else:
-                self._broker_addrs = mqtt_broker
-            self._broker_port = int(input('Enter the Port: '))
-            print('\n--> Testing MQTT BROKER connection.. ', end='')
-            sleep(1)
-            try:
-                if self._client_mqtt.connect(self._broker_addrs, self._broker_port, 60) != 0:
-                    print("Unable to establish connection with MQTT Broker!")
-                    sys.exit(-1)
+                if firstoptions == '1':
+                    print('\nDefault Configurations...')
+                    self.atendimento()
+
+                elif firstoptions == '2':
+                    try:
+                        modbus_server_ip = input('\nPlease, enter the Modbus TCP IP Address: ')
+                        if modbus_server_ip == "l":
+                            self._server_ip = 'localhost'
+                        else:
+                            self._server_ip = modbus_server_ip
+                        self._port = input('Enter the TCP Port: ')
+                        print('\n--> Testing Modbus/TCP connection.. ', end='')
+                        self._cliente.open()
+                        sleep(0.3)
+                        print('--> OK')
+                    except Exception as e: 
+                        print('ERROR: ', e.args)
+
+                    mqtt_broker = str(
+                        input('\nPlease, now enter the MQTT Broker Address: '))
+                    if mqtt_broker == "aws":
+                        self._broker_addrs = "3.134.40.193"
+                    else:
+                        self._broker_addrs = mqtt_broker
+                    self._broker_port = int(input('Enter the Port: '))
+                    print('\n--> Testing MQTT BROKER connection.. ', end='')
+                    sleep(1)
+                    try:
+                        if self._client_mqtt.connect(self._broker_addrs, self._broker_port, 60) != 0:
+                            print("Unable to establish connection with MQTT Broker!")
+                            sys.exit(-1)
+                        else:
+                            print('--> OK')
+                            self._status_conn_mqtt = True
+                    except Exception as e: 
+                        print('ERROR: ', e.args)
+                        print(
+                            "\nUnable to establish connection with MQTT Broker!\nCheck if the IP Address is OK and try again...")
+                        print('Following without connection with MQTT Broker..')
+                    self._client_mqtt.disconnect()
+                    self.atendimento()
+
+                elif firstoptions == '3':
+                    print()
+                    print('-' * 100)
+                    print('Modbus2MQTT Gateway- (Version 2 - 2022)'.center(100))
+                    print("""
+Modbus2MQTT Gateway is an app responsible for communicating between a Modbus/TCP network 
+and an MQTT Broker through a specific topic, security options such as password and user
+for MQTT communication have not yet been implemented in this version...""")
+                    print('\nDeveloped by: Guilherme Balduino Lopes')
+                    print('Email: guilhermebalopes@ufu.br\n')
+                    print('-' * 100)
+                    print()
+                    exitabt = input('Enter to exit...')
+
+                elif firstoptions == '4':
+                    confirm_close = input('\nType "YES" to confirm you want to exit the app: ').capitalize()[0]
+                    if confirm_close == 'Y':
+                        sleep(0.2)
+                        print('\nShutting down...\n')
+                        sleep(1)
+                        self._app = False
+                    else:
+                        print('\nGetting back...')
                 else:
-                    print('--> OK')
-                    self._status_conn_mqtt = True
-            except Exception as e: 
-                print('ERROR: ', e.args)
-                print(
-                    "\nUnable to establish connection with MQTT Broker!\nCheck if the IP Address is OK and try again...")
-                print('Following without connection with MQTT Broker..')
-            self._client_mqtt.disconnect()
+                    print('Not found...')
+
         except Exception as e:
             print('ERRO: ', e.args)
 
+
+    def atendimento(self):
+        """
+         Método para atendimento do usuário
+        """
         try:
             atendimento = True
             while atendimento:
@@ -358,6 +413,7 @@ Service N°: """)
                         self._cliente.close()
                         sleep(1)
                         atendimento = False
+                        self._app = False
                     else:
                         print('\nGetting back...')
                 else:
