@@ -102,7 +102,7 @@ Available Options:
                 elif firstoptions == '3':
                     print()
                     print('-' * 100)
-                    print('Modbus2MQTT Gateway- (Version 2 - 2022)'.center(100))
+                    print('Modbus2MQTT Gateway - (Version 2 - 2022)'.center(100))
                     print("""
 Modbus2MQTT Gateway is an app responsible for communicating between a Modbus/TCP network 
 and an MQTT Broker through Eclipse's paho-mqtt, security options such as password and user 
@@ -398,7 +398,11 @@ Service N°: """)
                 elif sel == '5':
                     print()
                     print('-' * 100)
-                    print('ModbusTCP/MQTT - (Version 2 - 2022)'.center(100))
+                    print('Modbus2MQTT Gateway - (Version 2 - 2022)'.center(100))
+                    print("""
+Modbus2MQTT Gateway is an app responsible for communicating between a Modbus/TCP network 
+and an MQTT Broker through Eclipse's paho-mqtt, security options such as password and user 
+for MQTT communication have not yet been implemented in this version...""")
                     print('\nDeveloped by: Guilherme Balduino Lopes')
                     print('Email: guilhermebalopes@ufu.br\n')
                     print('-' * 100)
