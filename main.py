@@ -1,9 +1,9 @@
 from mb2mqtt import ClienteMODBUS
 
-modbus_Addrs = '127.0.0.1'
+modbus_Addrs = 'localhost'
 modbus_Port = 502
 modbus_DeviceID = 1
-broker_local_Addrs = "127.0.0.1"
+broker_local_Addrs = 'localhost'
 broker_Port = 1883
 
 c = ClienteMODBUS(modbus_Addrs, modbus_Port, modbus_DeviceID, broker_local_Addrs, broker_Port)

@@ -58,6 +58,18 @@ Available Options:
 
                 if firstoptions == '1':
                     print('\nDefault Configurations...')
+                    try:
+                        if self._client_mqtt.connect(self._broker_addrs, self._broker_port, 60) != 0:
+                            print("Unable to establish connection with MQTT Broker!")
+                            sys.exit(-1)
+                        else:
+                            self._status_conn_mqtt = True
+                    except Exception as e: 
+                        print('ERROR: ', e.args)
+                        print(
+                            "\nUnable to establish connection with MQTT Broker!\nCheck if the IP Address is OK and try again...")
+                        print('Following without connection with MQTT Broker..')
+                    self._client_mqtt.disconnect()
                     self.atendimento()
 
                 elif firstoptions == '2':
@@ -83,7 +95,7 @@ Available Options:
                         self._broker_addrs = mqtt_broker
                     self._broker_port = int(input('Enter the Port: '))
                     print('\n--> Testing MQTT BROKER connection.. ', end='')
-                    sleep(1)
+                    sleep(.5)
                     try:
                         if self._client_mqtt.connect(self._broker_addrs, self._broker_port, 60) != 0:
                             print("Unable to establish connection with MQTT Broker!")
@@ -136,10 +148,12 @@ for MQTT communication have not yet been implemented in this version...""")
         try:
             atendimento = True
             while atendimento:
+                self._cliente.open()
                 print()
                 print('-'*100)
                 print('ModbusTCP/MQTT Client'.center(100))
                 print('-'*100)
+                sleep(.2)
                 sel = input("""
 Available services: 
 1- Start a read 
@@ -171,7 +185,7 @@ Service N°: """)
                             func = "F04-InputRegister"
                         addr = int(input(f'\nModbus Starting Address: '))
                         leng = int(input(f'Quantity of Registers: '))
-                        sleep(0.3)
+                        sleep(0.2)
                         try:
                             self._readingthread = True
                             self._threadread = Thread(target=self.readThread, args=(tipo, addr, leng, func))
